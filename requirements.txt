@@ -1,0 +1,7 @@
+pip install langchain-community
+pip install langchain
+pip install flask
+pip install crewai
+pip install Flask-Cors
+pip install openi
+pip install langchain-openai
