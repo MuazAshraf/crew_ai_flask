@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI Task Executor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='Muaz_Business_Logo.png') }}" type="image/x-icon">
+    <style>
+        .result h1 {
+            font-size: 24px; /* Larger font size for the title */
+            color: #000; /* Color for the title */
+            margin-bottom: 15px; /* Spacing after the title */
+        }
+
+        .result ul {
+            list-style-type: disc; /* Style of list bullet points */
+            padding-left: 20px; /* Indentation for list */
+        }
+
+        .result li {
+            margin-bottom: 10px; /* Spacing between list items */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Crew AI</h1>
+        <form id = "task-form" method="post" class="mt-4">
+            <label for="researcher_model">Select OpenAI ChatModel:</label>
+            <select name="researcher_model" id="researcher_model" class="form-control">
+                <option value="None">Please Select Model</option>
+                <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
+                <option value="gpt-4">GPT-4 Turbo preview model </option>
+            </select>
+
+            <div class="form-group">
+                <h2>Researcher Details:</h2>
+                <label>Role:</label>
+                <input type="text" name="researcher_role" class="form-control">
+                
+                <label>Goal:</label>
+                <input type="text" name="researcher_goal" class="form-control">
+                
+                <label>Backstory:</label>
+                <textarea name="researcher_backstory" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <h2>Writer Details:</h2>
+                <label>Role:</label>
+                <input type="text" name="writer_role" class="form-control">
+                
+                <label>Goal:</label>
+                <input type="text" name="writer_goal" class="form-control">
+                
+                <label>Backstory:</label>
+                <textarea name="writer_backstory" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <h2>Task 1:</h2>
+                <label>Description:</label>
+                <textarea name="task1_description" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <h2>Task 2:</h2>
+                <label>Description:</label>
+                <textarea name="task2_description" class="form-control"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                Execute Tasks
+            </button>
+        </form>
+
+        <div class="mt-4">
+            <h2>Results:</h2>
+            <div class="result-h2 d-none">Results</div>
+            <div class= "result"></div>
+        </div>
+
+    <!-- Bootstrap JS and dependencies (Optional) -->
+    <script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+    $('#task-form').submit(function(event){
+        event.preventDefault(); // Prevent the default form submission
+        $('.spinner-grow').show();
+
+        $.ajax({
+            type: 'POST',
+            url: '/execute-tasks',
+            data: $(this).serialize(),
+            success: function(response) {
+            console.log(response);
+            if (response) {
+                // Convert line breaks to <br> tags
+                response = response.replace(/\n/g, '<br>');
+
+                // Wrap titles in <h2> tags (assuming titles end with ':')
+                response = response.replace(/(.*:)/g, '<h2>$1</h2>');
+
+                $(".result-h2").removeClass("d-none"); // Show results heading
+                $(".result").html(response); // Insert the formatted HTML
+            }
+        },
+            error: function(error){
+                console.log(error);
+            },
+            complete: function() {
+                $('.spinner-grow').hide(); // Hide spinner after request
+            }
+        });
+    });
+});
+    </script>
+</body>
+</html>
